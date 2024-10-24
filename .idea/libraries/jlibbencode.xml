@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jlibbencode">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/jlibbencode.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
