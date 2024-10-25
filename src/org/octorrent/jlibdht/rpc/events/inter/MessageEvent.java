@@ -3,8 +3,6 @@ package org.octorrent.jlibdht.rpc.events.inter;
 import org.octorrent.jlibdht.messages.inter.MessageBase;
 import org.octorrent.jlibdht.utils.Node;
 
-import static org.octorrent.jlibdht.rpc.ResponseTracker.STALLED_TIME;
-
 public class MessageEvent extends Event {
 
     protected MessageBase message;
