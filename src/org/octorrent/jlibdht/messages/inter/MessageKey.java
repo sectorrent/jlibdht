@@ -1,9 +1,5 @@
 package org.octorrent.jlibdht.messages.inter;
 
-import org.octorrent.jlibdht.utils.ByteWrapper;
-
-import java.util.Arrays;
-
 public class MessageKey {
 
     private String method;
