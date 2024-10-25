@@ -74,6 +74,11 @@ public class KRoutingTable extends RoutingTable {
     }
 
     @Override
+    public void setExternalAddress(InetAddress address){
+        consensusExternalAddress = address;
+    }
+
+    @Override
     public InetAddress getConsensusExternalAddress(){
         return consensusExternalAddress;
     }

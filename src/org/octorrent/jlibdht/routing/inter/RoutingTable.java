@@ -19,6 +19,8 @@ public abstract class RoutingTable {
 
     public abstract void updatePublicIPConsensus(InetAddress source, InetAddress addr);
 
+    public abstract void setExternalAddress(InetAddress address);
+
     public abstract InetAddress getConsensusExternalAddress();
 
     public abstract void insert(Node n);

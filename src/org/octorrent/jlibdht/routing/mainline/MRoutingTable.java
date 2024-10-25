@@ -40,6 +40,11 @@ public class MRoutingTable extends RoutingTable {
     }
 
     @Override
+    public void setExternalAddress(InetAddress address){
+        consensusExternalAddress = address;
+    }
+
+    @Override
     public InetAddress getConsensusExternalAddress(){
         return null;
     }
