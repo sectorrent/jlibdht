@@ -1,7 +1,3 @@
-[![Build Status](https://github.com/DrBrad/Kad4/workflows/Build/badge.svg)](https://github.com/DrBrad/Kad4/actions)
-[![GitHub release](https://img.shields.io/github/v/release/DrBrad/Kad4.svg)](https://github.com/DrBrad/Kad4/releases)
-![](https://img.shields.io/badge/platform-win%20%7C%20macos%20%7C%20linux-pass.svg)
-
 # jlibdht
 Kademlia DHT compatible with BitTorrent protocol that uses Java Reflect
 - If your looking for a lower level version of this try [rlibdht](https://github.com/octorrent/rlibdht) which is a version of this project made in Rust.
