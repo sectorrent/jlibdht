@@ -8,7 +8,7 @@ Distributed Hash tables don't have allot of documentation online nor are their m
 
 Implementation
 -----
-Implementing Kad4 is very easy, just download the JAR and add it as a library to your project.
+Implementing jlibdht is very easy, just download the JAR and add it as a library to your project.
 
 Library
 -----
