@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="jlibdht:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/jlibdht_jar</output-path>
-    <root id="archive" name="jlibdht.jar">
-      <element id="module-output" name="jlibdht" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jlibbencode.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>

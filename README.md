@@ -1,6 +1,6 @@
 # jlibdht
 Kademlia DHT compatible with BitTorrent protocol that uses Java Reflect
-- If your looking for a lower level version of this try [rlibdht](https://github.com/octorrent/rlibdht) which is a version of this project made in Rust.
+- If your looking for a lower level version of this try [rlibdht](https://github.com/sectorrent/rlibdht) which is a version of this project made in Rust.
 
 Why / About
 -----
