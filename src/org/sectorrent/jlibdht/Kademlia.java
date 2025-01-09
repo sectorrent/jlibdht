@@ -9,12 +9,15 @@ import org.sectorrent.jlibdht.refresh.tasks.BucketRefreshTask;
 import org.sectorrent.jlibdht.refresh.tasks.StaleRefreshTask;
 import org.sectorrent.jlibdht.routing.BucketTypes;
 import org.sectorrent.jlibdht.routing.inter.RoutingTable;
+import org.sectorrent.jlibdht.routing.kb.KBucket;
 import org.sectorrent.jlibdht.rpc.JoinNodeListener;
 import org.sectorrent.jlibdht.rpc.KRequestListener;
+import org.sectorrent.jlibdht.utils.Node;
 
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.InetSocketAddress;
+import java.util.List;
 
 public class Kademlia extends KademliaBase {
 
@@ -29,12 +32,24 @@ public class Kademlia extends KademliaBase {
     public Kademlia(RoutingTable routingTable){
         super(routingTable);
 
-        BucketRefreshTask bucketRefreshTask = new BucketRefreshTask();
-
         routingTable.addRestartListener(new RoutingTable.RestartListener(){
             @Override
             public void onRestart(){
-                bucketRefreshTask.execute();
+                List<Node> closest = getRoutingTable().findClosest(routingTable.getDerivedUID(), KBucket.MAX_BUCKET_SIZE);
+                if(closest.isEmpty()){
+                    return;
+                }
+
+                for(Node n : closest){
+                    FindNodeRequest request = new FindNodeRequest();
+                    request.setDestination(n.getAddress());
+                    request.setTarget(routingTable.getDerivedUID());
+                    try{
+                        server.send(request, new JoinNodeListener(Kademlia.this));
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -46,7 +61,7 @@ public class Kademlia extends KademliaBase {
             server.registerMessage(FindNodeRequest.class);
             server.registerMessage(FindNodeResponse.class);
 
-            refresh.addOperation(bucketRefreshTask);
+            refresh.addOperation(new BucketRefreshTask());
             refresh.addOperation(new StaleRefreshTask());
 
         }catch(NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){

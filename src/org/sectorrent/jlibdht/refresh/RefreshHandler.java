@@ -45,7 +45,7 @@ public class RefreshHandler {
                 }
             };
 
-            refreshTimer.schedule(refreshTimerTask, 0, refreshTime); //MAKE DELAY LONG, HOWEVER PERIOD AROUND 1 HOUR
+            refreshTimer.schedule(refreshTimerTask, refreshTime, refreshTime); //MAKE DELAY LONG, HOWEVER PERIOD AROUND 1 HOUR
         }
     }
 

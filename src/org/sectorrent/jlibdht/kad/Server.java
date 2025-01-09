@@ -193,16 +193,15 @@ public class Server {
 
         //CATCH IF NO TID... - MESSAGE IS POINTLESS - IGNORE
 
-
-        BencodeObject ben = new BencodeObject(packet.getData());
-
-        if(!ben.containsKey(TID_KEY) || !ben.containsKey(MessageType.TYPE_KEY)){
-            return;
-        }
-
-        MessageType t = MessageType.fromRPCTypeName(ben.getString(MessageType.TYPE_KEY));
-
         try{
+            BencodeObject ben = new BencodeObject(packet.getData());
+
+            if(!ben.containsKey(TID_KEY) || !ben.containsKey(MessageType.TYPE_KEY)){
+                return;
+            }
+
+            MessageType t = MessageType.fromRPCTypeName(ben.getString(MessageType.TYPE_KEY));
+
             switch(t){
                 case REQ_MSG: {
                         MessageKey k = new MessageKey(ben.getString(t.getRPCTypeName()), t);
