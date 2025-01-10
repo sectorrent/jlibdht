@@ -52,11 +52,6 @@ public class FindNodeResponse extends MethodMessageBase {
     public void decode(BencodeObject ben)throws MessageException {
         super.decode(ben);
 
-        if(!ben.getBencodeObject(type.innerKey()).containsKey("nodes") &&
-                !ben.getBencodeObject(type.innerKey()).containsKey("nodes6")){
-            throw new MessageException("Protocol Error, such as a malformed packet.", 203);
-        }
-
         if(ben.getBencodeObject(type.innerKey()).containsKey("nodes")){
             nodes.addAll(unpackNodes(ben.getBencodeObject(type.innerKey()).getBytes("nodes"), AddressType.IPv4));
         }

@@ -35,12 +35,10 @@ public class KRequestListener extends RequestListener {
         List<Node> nodes = getRoutingTable().findClosest(request.getTarget(), KBucket.MAX_BUCKET_SIZE);
         nodes.remove(event.getNode());
 
-        if(!nodes.isEmpty()){
-            FindNodeResponse response = new FindNodeResponse(request.getTransactionID());
-            response.setDestination(event.getMessage().getOrigin());
-            response.setPublic(event.getMessage().getOrigin());
-            response.addNodes(nodes);
-            event.setResponse(response);
-        }
+        FindNodeResponse response = new FindNodeResponse(request.getTransactionID());
+        response.setDestination(event.getMessage().getOrigin());
+        response.setPublic(event.getMessage().getOrigin());
+        response.addNodes(nodes);
+        event.setResponse(response);
     }
 }

@@ -64,6 +64,7 @@ public class JoinNodeListener extends ResponseCallback {
                 for(Node n : nodes){
                     PingRequest request = new PingRequest();
                     request.setDestination(n.getAddress());
+
                     try{
                         kademlia.getServer().send(request, n, listener);
                     }catch(IOException e){
