@@ -3,6 +3,7 @@ package org.sectorrent.jlibdht.rpc;
 import org.sectorrent.jlibdht.kad.KademliaBase;
 import org.sectorrent.jlibdht.messages.FindNodeRequest;
 import org.sectorrent.jlibdht.messages.FindNodeResponse;
+import org.sectorrent.jlibdht.messages.PingRequest;
 import org.sectorrent.jlibdht.routing.kb.KComparator;
 import org.sectorrent.jlibdht.rpc.events.ErrorResponseEvent;
 import org.sectorrent.jlibdht.rpc.events.ResponseEvent;
@@ -44,11 +45,6 @@ public class JoinNodeListener extends ResponseCallback {
             TreeSet<Node> sortedSet = new TreeSet<>(new KComparator(uid));
             sortedSet.addAll(nodes);
 
-            if(stop || distance < uid.getDistance(sortedSet.first().getUID())){
-                stop = true;
-                return;
-            }
-
             for(int i = nodes.size()-1; i > -1; i--){
                 if(uid.equals(nodes.get(i).getUID()) ||
                         queries.contains(nodes.get(i)) ||
@@ -59,6 +55,24 @@ public class JoinNodeListener extends ResponseCallback {
             }
 
             queries.addAll(nodes);
+
+            if(stop || distance < uid.getDistance(sortedSet.first().getUID())){
+                stop = true;
+
+                PingResponseListener listener = new PingResponseListener(kademlia.getRoutingTable());
+
+                for(Node n : nodes){
+                    PingRequest request = new PingRequest();
+                    request.setDestination(n.getAddress());
+                    try{
+                        kademlia.getServer().send(request, n, listener);
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                return;
+            }
 
             for(Node n : nodes){
                 FindNodeRequest request = new FindNodeRequest();
