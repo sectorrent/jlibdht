@@ -88,7 +88,7 @@ public class JoinNodeListener extends ResponseCallback {
         }
 
         if(!kademlia.getRefreshHandler().isRunning()){
-            kademlia.getRefreshHandler().start();
+            kademlia.getRefreshHandler().start(kademlia.getRefreshHandler().getRefreshTime());
         }
     }
 
