@@ -47,16 +47,17 @@ public class SpamThrottle {
         long now = System.currentTimeMillis();
         long last = lastDecayTime.get();
         long deltaT = TimeUnit.MILLISECONDS.toSeconds(now-last);
+
         if(deltaT < 1){
             return;
         }
+
         if(!lastDecayTime.compareAndSet(last, last+deltaT*1000)){
             return;
         }
 
         int deltaC = (int) (deltaT*PER_SECOND);
 
-        // minor optimization: delete first, then replace only what's left
         hitCounter.entrySet().removeIf(entry -> entry.getValue() <= deltaC);
         hitCounter.replaceAll((k, v) -> v - deltaC);
 
