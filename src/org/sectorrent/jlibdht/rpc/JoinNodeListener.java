@@ -15,7 +15,6 @@ import org.sectorrent.jlibdht.utils.UID;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class JoinNodeListener extends ResponseCallback {
 
@@ -42,8 +41,7 @@ public class JoinNodeListener extends ResponseCallback {
             UID uid = kademlia.getRoutingTable().getDerivedUID();
             int distance = uid.getDistance(event.getNode().getUID());
 
-            TreeSet<Node> sortedSet = new TreeSet<>(new KComparator(uid));
-            sortedSet.addAll(nodes);
+            nodes.sort(new KComparator(uid));
 
             for(int i = nodes.size()-1; i > -1; i--){
                 if(uid.equals(nodes.get(i).getUID()) ||
@@ -56,7 +54,7 @@ public class JoinNodeListener extends ResponseCallback {
 
             queries.addAll(nodes);
 
-            if(stop || distance <= uid.getDistance(sortedSet.first().getUID())){
+            if(stop || nodes.isEmpty() || distance <= uid.getDistance(nodes.get(0).getUID())){
                 stop = true;
 
                 PingResponseListener listener = new PingResponseListener(kademlia.getRoutingTable());

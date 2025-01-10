@@ -175,19 +175,10 @@ public class KRoutingTable extends RoutingTable {
 
     @Override
     public synchronized List<Node> findClosest(UID k, int r){
-        TreeSet<Node> sortedSet = new TreeSet<>(new KComparator(k));
-        sortedSet.addAll(getAllNodes());
+        List<Node> nodes = getAllNodes();
+        nodes.sort(new KComparator(k));
 
-        List<Node> closest = new ArrayList<>(r);
-
-        int count = 0;
-        for(Node n : sortedSet){
-            closest.add(n);
-            if(count++ == r){
-                break;
-            }
-        }
-        return closest;
+        return (nodes.size() > r) ? nodes.subList(0, r) : nodes;
     }
 
     /*
