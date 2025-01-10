@@ -28,10 +28,6 @@ public class RefreshHandler {
     }
 
     public void start(){
-        start(0);
-    }
-
-    public void start(long delay){
         if(isRunning()){
             throw new IllegalArgumentException("Refresh has already started.");
         }
@@ -49,7 +45,7 @@ public class RefreshHandler {
                 }
             };
 
-            refreshTimer.schedule(refreshTimerTask, delay, refreshTime); //MAKE DELAY LONG, HOWEVER PERIOD AROUND 1 HOUR
+            refreshTimer.schedule(refreshTimerTask, refreshTime, refreshTime); //MAKE DELAY LONG, HOWEVER PERIOD AROUND 1 HOUR
         }
     }
 
