@@ -56,7 +56,7 @@ public class JoinNodeListener extends ResponseCallback {
 
             queries.addAll(nodes);
 
-            if(stop || distance < uid.getDistance(sortedSet.first().getUID())){
+            if(stop || distance <= uid.getDistance(sortedSet.first().getUID())){
                 stop = true;
 
                 PingResponseListener listener = new PingResponseListener(kademlia.getRoutingTable());
