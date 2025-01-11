@@ -110,8 +110,6 @@ public class Server {
                         }
                     }
 
-                    tracker.removeStalled();
-
                     if(!senderPool.isEmpty()){
                         DatagramPacket packet = senderPool.poll();
 
@@ -126,7 +124,10 @@ public class Server {
 
                     long now = System.currentTimeMillis();
                     if(now-lastDecayTime >= 1000){
+                        receiverThrottle.decay();
                         senderThrottle.decay();
+                        tracker.removeStalled();
+
                         lastDecayTime = now;
                     }
 
