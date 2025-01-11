@@ -17,30 +17,30 @@ public class SpamThrottle {
         lastDecayTime = new AtomicLong(System.currentTimeMillis());
     }
 
-    public boolean addAndTest(InetAddress addr){
-        return (saturatingAdd(addr) >= BURST);
+    public boolean addAndTest(InetAddress address){
+        return (saturatingAdd(address) >= BURST);
     }
 
-    public void remove(InetAddress addr){
-        hitCounter.remove(addr);
+    public void remove(InetAddress address){
+        hitCounter.remove(address);
     }
 
-    public boolean test(InetAddress addr){
-        return hitCounter.getOrDefault(addr, 0) >= BURST;
+    public boolean test(InetAddress address){
+        return hitCounter.getOrDefault(address, 0) >= BURST;
     }
 
-    public int calculateDelayAndAdd(InetAddress addr){
-        int counter = hitCounter.compute(addr, (key, old) -> old == null ? 1 : old+1);
+    public int calculateDelayAndAdd(InetAddress address){
+        int counter = hitCounter.compute(address, (key, old) -> old == null ? 1 : old+1);
         int diff = counter - BURST;
         return Math.max(diff, 0)*1000/PER_SECOND;
     }
 
-    public void saturatingDec(InetAddress addr){
-        hitCounter.compute(addr, (key, old) -> old == null || old == 1 ? null : old-1);
+    public void saturatingDec(InetAddress address){
+        hitCounter.compute(address, (key, old) -> old == null || old == 1 ? null : old-1);
     }
 
-    public int saturatingAdd(InetAddress addr){
-        return hitCounter.compute(addr, (key, old) -> old == null ? 1 : Math.min(old+1, BURST));
+    public int saturatingAdd(InetAddress address){
+        return hitCounter.compute(address, (key, old) -> old == null ? 1 : Math.min(old+1, BURST));
     }
 
     public void decay(){
@@ -60,6 +60,5 @@ public class SpamThrottle {
 
         hitCounter.entrySet().removeIf(entry -> entry.getValue() <= deltaC);
         hitCounter.replaceAll((k, v) -> v - deltaC);
-
     }
 }

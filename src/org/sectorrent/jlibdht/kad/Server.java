@@ -16,6 +16,7 @@ import org.sectorrent.jlibdht.rpc.events.inter.ResponseCallback;
 import org.sectorrent.jlibdht.utils.ByteWrapper;
 import org.sectorrent.jlibdht.utils.Node;
 import org.sectorrent.jlibdht.utils.ReflectMethod;
+import org.sectorrent.jlibdht.utils.SpamThrottle;
 import org.sectorrent.jlibdht.utils.net.AddressUtils;
 
 import java.io.IOException;
@@ -43,17 +44,21 @@ public class Server {
     private SecureRandom random;
     private boolean allowBogon;
     protected ResponseTracker tracker;
-    protected ConcurrentLinkedQueue<DatagramPacket> receiverPool;
+    protected ConcurrentLinkedQueue<DatagramPacket> senderPool, receiverPool;
     protected Map<String, List<ReflectMethod>> requestMapping;
     protected Map<MessageKey, Constructor<?>> messages;
+    private SpamThrottle senderThrottle, receiverThrottle;
 
     public Server(KademliaBase kademlia){
         this.kademlia = kademlia;
         tracker = new ResponseTracker();
 
+        senderPool = new ConcurrentLinkedQueue<>();
         receiverPool = new ConcurrentLinkedQueue<>();
         requestMapping = new HashMap<>();
         messages = new HashMap<>();
+        senderThrottle = new SpamThrottle();
+        receiverThrottle = new SpamThrottle();
 
         try{
             random = SecureRandom.getInstance("SHA1PRNG");
@@ -80,7 +85,9 @@ public class Server {
                         server.receive(packet);
 
                         if(packet != null){
-                            receiverPool.offer(packet);
+                            if(!receiverThrottle.addAndTest(packet.getAddress())){
+                                receiverPool.offer(packet);
+                            }
                         }
                     }catch(IOException e){
                         e.printStackTrace();
@@ -92,12 +99,36 @@ public class Server {
         new Thread(new Runnable(){
             @Override
             public void run(){
+                long lastDecayTime = System.currentTimeMillis();
+
                 while(!server.isClosed()){
                     if(!receiverPool.isEmpty()){
-                        onReceive(receiverPool.poll());
+                        DatagramPacket packet = receiverPool.poll();
+
+                        if(!receiverThrottle.test(packet.getAddress())){
+                            onReceive(packet);
+                        }
                     }
 
                     tracker.removeStalled();
+
+                    if(!senderPool.isEmpty()){
+                        DatagramPacket packet = senderPool.poll();
+
+                        if(!senderThrottle.test(packet.getAddress())){
+                            try{
+                                server.send(packet);
+                            }catch(IOException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    long now = System.currentTimeMillis();
+                    if(now-lastDecayTime >= 1000){
+                        senderThrottle.decay();
+                        lastDecayTime = now;
+                    }
 
                     try{
                         Thread.sleep(1);
@@ -375,7 +406,11 @@ public class Server {
         }
 
         byte[] data = message.encode().encode();
-        server.send(new DatagramPacket(data, 0, data.length, message.getDestination()));
+        if(!senderThrottle.addAndTest(message.getDestinationAddress())){
+            senderPool.add(new DatagramPacket(data, 0, data.length, message.getDestination()));
+        }
+
+        //server.send(new DatagramPacket(data, 0, data.length, message.getDestination()));
     }
 
     public void send(MethodMessageBase message, ResponseCallback callback)throws IOException {
