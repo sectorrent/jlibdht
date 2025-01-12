@@ -82,7 +82,6 @@ public class KBucket {
 
     public List<Node> getUnQueriedNodes(long now){
         List<Node> q = new ArrayList<>();
-        //long now = System.currentTimeMillis();
 
         for(Node n : nodes){
             if(!n.hasQueried(now)){
@@ -101,42 +100,4 @@ public class KBucket {
     public int csize(){
         return cache.size();
     }
-
-    /*
-
-    public synchronized void markStale(Node c){
-        if(contacts.contains(c)){
-            contacts.get(contacts.indexOf(c)).markStale();
-        }
-    }
-
-    public synchronized void removeSpoof(Node c){
-        if(contacts.contains(c)){
-            contacts.remove(c);
-
-            if(!cache.isEmpty()){
-                contacts.remove(c);
-                contacts.add(cache.get(0));
-                cache.remove(0);
-            }
-
-        }else if(cache.contains(c)){
-            cache.remove(c);
-        }
-    }
-
-    public synchronized boolean contains(Node c){
-        return contacts.contains(c) || cache.contains(c);
-    }
-
-    public synchronized boolean verify(Node c){
-        return contacts.stream().filter(o -> o.verify(c)).findFirst().isPresent() ||
-                cache.stream().filter(o -> o.verify(c)).findFirst().isPresent();
-    }
-
-    public List<Node> getContacts(){
-        contacts.sort(new LSComparetor());
-        return contacts;
-    }
-    */
 }
