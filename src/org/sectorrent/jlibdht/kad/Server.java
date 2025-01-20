@@ -39,6 +39,7 @@ public class Server {
     public static final int TID_LENGTH = 6;
 
     protected final KademliaBase kademlia;
+    protected Thread handle;
     protected DatagramSocket server;
 
     private SecureRandom random;
@@ -76,7 +77,7 @@ public class Server {
         server = new DatagramSocket(port);
         server.setSoTimeout(10);
 
-        new Thread(new Runnable(){
+        handle = new Thread(new Runnable(){
             @Override
             public void run(){
                 long lastDecayTime = System.currentTimeMillis();
@@ -122,7 +123,9 @@ public class Server {
                     }
                 }
             }
-        }).start();
+        });
+
+        handle.start();
     }
 
     public void stop(){

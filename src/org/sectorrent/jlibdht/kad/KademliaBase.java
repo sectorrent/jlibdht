@@ -71,4 +71,10 @@ public class KademliaBase {
     public RefreshHandler getRefreshHandler(){
         return refresh;
     }
+
+    public void joinThread()throws InterruptedException {
+        if(server.isRunning()){
+            server.handle.join();
+        }
+    }
 }
