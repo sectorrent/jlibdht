@@ -44,7 +44,7 @@ public class Server {
     private SecureRandom random;
     private boolean allowBogon;
     protected ResponseTracker tracker;
-    protected ConcurrentLinkedQueue<DatagramPacket> senderPool, receiverPool;
+    protected ConcurrentLinkedQueue<DatagramPacket> senderPool;
     protected Map<String, List<ReflectMethod>> requestMapping;
     protected Map<MessageKey, Constructor<?>> messages;
     private SpamThrottle senderThrottle, receiverThrottle;
@@ -54,7 +54,6 @@ public class Server {
         tracker = new ResponseTracker();
 
         senderPool = new ConcurrentLinkedQueue<>();
-        receiverPool = new ConcurrentLinkedQueue<>();
         requestMapping = new HashMap<>();
         messages = new HashMap<>();
         senderThrottle = new SpamThrottle();
@@ -75,26 +74,7 @@ public class Server {
         }
 
         server = new DatagramSocket(port);
-
-        new Thread(new Runnable(){
-            @Override
-            public void run(){
-                while(!server.isClosed()){
-                    try{
-                        DatagramPacket packet = new DatagramPacket(new byte[65535], 65535);
-                        server.receive(packet);
-
-                        if(packet != null){
-                            if(!receiverThrottle.addAndTest(packet.getAddress())){
-                                receiverPool.offer(packet);
-                            }
-                        }
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+        server.setSoTimeout(10);
 
         new Thread(new Runnable(){
             @Override
@@ -102,12 +82,16 @@ public class Server {
                 long lastDecayTime = System.currentTimeMillis();
 
                 while(!server.isClosed()){
-                    if(!receiverPool.isEmpty()){
-                        DatagramPacket packet = receiverPool.poll();
+                    try{
+                        DatagramPacket packet = new DatagramPacket(new byte[65535], 65535);
+                        server.receive(packet);
 
-                        if(!receiverThrottle.test(packet.getAddress())){
-                            onReceive(packet);
+                        if(packet != null){
+                            if(!receiverThrottle.addAndTest(packet.getAddress())){
+                                onReceive(packet);
+                            }
                         }
+                    }catch(IOException e){
                     }
 
                     if(!senderPool.isEmpty()){
