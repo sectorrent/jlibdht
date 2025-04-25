@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoinNodeListener extends ResponseCallback {
+public class JoinNodeResponseListener extends ResponseCallback {
 
     private KademliaBase kademlia;
     private List<Node> queries;
     private boolean stop;
 
-    public JoinNodeListener(KademliaBase kademlia){
+    public JoinNodeResponseListener(KademliaBase kademlia){
         this.kademlia = kademlia;
         queries = new ArrayList<>();
     }

@@ -10,7 +10,7 @@ import org.sectorrent.jlibdht.refresh.tasks.StaleRefreshTask;
 import org.sectorrent.jlibdht.routing.BucketTypes;
 import org.sectorrent.jlibdht.routing.inter.RoutingTable;
 import org.sectorrent.jlibdht.routing.kb.KBucket;
-import org.sectorrent.jlibdht.rpc.JoinNodeListener;
+import org.sectorrent.jlibdht.rpc.JoinNodeResponseListener;
 import org.sectorrent.jlibdht.rpc.KRequestListener;
 import org.sectorrent.jlibdht.utils.Node;
 
@@ -45,7 +45,7 @@ public class Kademlia extends KademliaBase {
                     request.setDestination(n.getAddress());
                     request.setTarget(routingTable.getDerivedUID());
                     try{
-                        server.send(request, new JoinNodeListener(Kademlia.this));
+                        server.send(request, new JoinNodeResponseListener(Kademlia.this));
                     }catch(IOException e){
                         e.printStackTrace();
                     }
@@ -76,6 +76,6 @@ public class Kademlia extends KademliaBase {
         FindNodeRequest request = new FindNodeRequest();
         request.setDestination(address);
         request.setTarget(routingTable.getDerivedUID());
-        server.send(request, new JoinNodeListener(this));
+        server.send(request, new JoinNodeResponseListener(this));
     }
 }
