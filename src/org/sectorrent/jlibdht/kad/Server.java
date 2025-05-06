@@ -214,10 +214,6 @@ public class Server {
             return;
         }
 
-        //SPAM THROTTLE...
-
-        //CATCH IF NO TID... - MESSAGE IS POINTLESS - IGNORE
-
         try{
             BencodeObject ben = new BencodeObject(packet.getData());
 
@@ -393,7 +389,7 @@ public class Server {
             message.setUID(kademlia.getRoutingTable().getDerivedUID());
         }
 
-        byte[] data = message.encode().encode();
+        byte[] data = message.encode().toBencode();
         if(!senderThrottle.addAndTest(message.getDestinationAddress())){
             senderPool.add(new DatagramPacket(data, 0, data.length, message.getDestination()));
         }
